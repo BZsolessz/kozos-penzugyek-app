@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Közös pénzügyek</title>
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --success: #16a34a;
+      --danger: #dc2626;
+    }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 40px; }
+    header {
+      background: var(--primary); color: white; padding: 16px;
+      position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    header h1 { margin: 0; font-size: 19px; font-weight: 700; }
+    .refresh-btn {
+      background: rgba(255,255,255,0.2); border: none; color: white;
+      padding: 7px 12px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    }
+    .container { padding: 14px; max-width: 600px; margin: 0 auto; }
+    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .sum-card {
+      background: var(--card); border-radius: 14px; padding: 14px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .sum-label { font-size: 12px; color: var(--muted); font-weight: 600; }
+    .sum-val { font-size: 18px; font-weight: 800; margin-top: 4px; color: var(--text); }
+    .card {
+      background: var(--card); border-radius: 14px; padding: 16px;
+      margin-bottom: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .card h2 { margin: 0 0 12px 0; font-size: 16px; color: var(--text); }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 5px; }
+    .field input, .field select {
+      width: 100%; padding: 11px 12px; border: 1px solid var(--border);
+      border-radius: 10px; font-size: 15px; background: #f8fafc; color: var(--text);
+    }
+    .who-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .who-btn {
+      padding: 11px; border: 2px solid var(--border); border-radius: 10px;
+      background: #f8fafc; font-size: 15px; font-weight: 700; color: var(--muted);
+      cursor: pointer; text-align: center;
+    }
+    .who-btn.active {
+      border-color: var(--primary); background: #eff6ff; color: var(--primary);
+    }
+    .btn {
+      width: 100%; padding: 14px; background: var(--primary); color: white;
+      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
+      cursor: pointer; margin-top: 4px;
+    }
+    .btn:active { background: var(--primary-dark); }
+    .btn:disabled { opacity: 0.6; }
+    .status {
+      padding: 11px 12px; border-radius: 10px; font-size: 13px; font-weight: 600;
+      margin-bottom: 12px; display: none;
+    }
+    .status.ok { display: block; background: #dcfce7; color: var(--success); }
+    .status.err { display: block; background: #fee2e2; color: var(--danger); }
+    .row-item {
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid var(--border); padding: 10px 0;
+    }
+    .row-item:last-child { border-bottom: none; }
+    .row-title { font-weight: 700; font-size: 14px; color: var(--text); }
+    .row-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .row-amount { font-weight: 800; font-size: 14px; white-space: nowrap; margin-left: 10px; }
+    .loader { text-align: center; padding: 20px; color: var(--muted); font-size: 14px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Közös pénzügyek 💰</h1>
+    <button class="refresh-btn" onclick="loadData()">↻ Frissítés</button>
+  </header>
+
+  <div class="container">
+    <div id="statusBox" class="status"></div>
+
+    <div class="summary-grid">
+      <div class="sum-card">
+        <div class="sum-label">E havi Zsolt</div>
+        <div class="sum-val" id="sumZsolt">0 Ft</div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-label">E havi Vivien</div>
+        <div class="sum-val" id="sumVivien">0 Ft</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Új tétel rögzítése</h2>
+      <form id="entryForm" onsubmit="submitRow(event)">
+        <div class="field">
+          <label>Ki fizette?</label>
+          <div class="who-group">
+            <div class="who-btn active" id="btnZsolt" onclick="selectWho('Zsolt')">Zsolt</div>
+            <div class="who-btn" id="btnVivien" onclick="selectWho('Vivien')">Vivien</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Dátum</label>
+          <input type="date" id="inpDatum" required />
+        </div>
+
+        <div class="field">
+          <label>Kategória</label>
+          <select id="inpKategoria" required>
+            <option value="Élelmiszer & Háztartás">Élelmiszer & Háztartás</option>
+            <option value="Étterem & Randi">Étterem & Randi</option>
+            <option value="Dohánybolt">Dohánybolt</option>
+            <option value="Üzemanyag & Autó">Üzemanyag & Autó</option>
+            <option value="Előfizetés">Előfizetés</option>
+            <option value="Tech & Vásárlás">Tech & Vásárlás</option>
+            <option value="Gyógyszertár">Gyógyszertár</option>
+            <option value="Egyéb">Egyéb</option>
+            <option value="Tartozás">Tartozás</option>
+            <option value="Bevétel: Közös">Bevétel: Közös</option>
+            <option value="Albérlet: Közös">Albérlet: Közös</option>
+            <option value="Hitel: Törlesztés">Hitel: Törlesztés</option>
+            <option value="Egyenleg: Korrekció">Egyenleg: Korrekció</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Megnevezés</label>
+          <input type="text" id="inpMegnevezes" placeholder="pl. Lidl, MOL, McDonald's..." required />
+        </div>
+
+        <div class="field">
+          <label>Összeg (Ft)</label>
+          <input type="number" inputmode="numeric" id="inpOsszeg" placeholder="pl. 4500" required />
+        </div>
+
+        <button type="submit" id="saveBtn" class="btn">Mentés a táblázatba</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Legutóbbi 15 tétel</h2>
+      <div id="recentList">
+        <div class="loader">Adatok betöltése a Google táblázatból...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbzBa1QGlWBG0bIEUnfacci9grwyIzZPUulW1gmC6pQm55gb8cb5YI9n3-mIirTViPES/exec";
+    let selectedWho = "Zsolt";
+
+    document.getElementById("inpDatum").value = new Date().toISOString().split("T")[0];
+
+    function selectWho(name) {
+      selectedWho = name;
+      document.getElementById("btnZsolt").classList.toggle("active", name === "Zsolt");
+      document.getElementById("btnVivien").classList.toggle("active", name === "Vivien");
+    }
+
+    function showStatus(msg, isError = false) {
+      const box = document.getElementById("statusBox");
+      box.textContent = msg;
+      box.className = "status " + (isError ? "err" : "ok");
+      if (!isError) setTimeout(() => { box.style.display = "none"; }, 3500);
+    }
+
+    function formatFt(num) {
+      return Math.round(num).toLocaleString("hu-HU") + " Ft";
+    }
+
+    async function loadData() {
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+        if (data.status !== "ok" || !data.rows) throw new Error("Hibás válasz.");
+
+        const rows = data.rows.slice(1);
+        updateMonthlySummary(rows);
+        renderRecent(rows);
+      } catch (err) {
+        showStatus("Betöltési hiba: " + err.message, true);
+        document.getElementById("recentList").innerHTML = "<div class='loader'>Nem sikerült kapcsolódni.</div>";
+      }
+    }
+
+    function updateMonthlySummary(rows) {
+      const nowPrefix = new Date().toISOString().slice(0, 7); // pl. "2026-11"
+      let zsolt = 0, vivien = 0;
+
+      rows.forEach(r => {
+        const datum = String(r[0] || "").slice(0, 7);
+        const ki = String(r[1] || "").trim();
+        const kat = String(r[2] || "");
+        const osszeg = Number(r[4]) || 0;
+
+        if (datum === nowPrefix && !kat.startsWith("Bevétel") && !kat.startsWith("Hitel: Keret") && !kat.startsWith("Egyenleg")) {
+          if (ki === "Zsolt") zsolt += osszeg;
+          if (ki === "Vivien") vivien += osszeg;
+        }
+      });
+
+      document.getElementById("sumZsolt").textContent = formatFt(zsolt);
+      document.getElementById("sumVivien").textContent = formatFt(vivien);
+    }
+
+    function renderRecent(rows) {
+      const list = document.getElementById("recentList");
+      if (rows.length === 0) {
+        list.innerHTML = "<div class='loader'>Még nincsenek tételek.</div>";
+        return;
+      }
+
+      const lastItems = rows.slice(-15).reverse();
+      list.innerHTML = lastItems.map(r => {
+        const datum = String(r[0] || "").slice(0, 10);
+        const ki = r[1] || "";
+        const kat = r[2] || "";
+        const megnev = r[3] || "Tétel";
+        const osszeg = Number(r[4]) || 0;
+
+        return `<div class="row-item">
+          <div>
+            <div class="row-title">${megnev}</div>
+            <div class="row-sub">${datum} • ${ki} • ${kat}</div>
+          </div>
+          <div class="row-amount">${formatFt(osszeg)}</div>
+        </div>`;
+      }).join("");
+    }
+
+    async function submitRow(e) {
+      e.preventDefault();
+      const btn = document.getElementById("saveBtn");
+      btn.disabled = true;
+      btn.textContent = "Mentés...";
+
+      const rowValues = [
+        document.getElementById("inpDatum").value,
+        selectedWho,
+        document.getElementById("inpKategoria").value,
+        document.getElementById("inpMegnevezes").value.trim(),
+        Number(document.getElementById("inpOsszeg").value)
+      ];
+
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "append", row: rowValues })
+        });
+        showStatus("Elmentve a táblázatba! ✅");
+        document.getElementById("inpMegnevezes").value = "";
+        document.getElementById("inpOsszeg").value = "";
+        await loadData();
+      } catch (err) {
+        showStatus("Mentési hiba: " + err.message, true);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Mentés a táblázatba";
+      }
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
