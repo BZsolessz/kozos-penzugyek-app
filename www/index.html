@@ -3,272 +3,1247 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Közös pénzügyek</title>
+  <title>Közös pénzügyek 🍂</title>
   <style>
     :root {
-      --bg: #f1f5f9;
-      --card: #ffffff;
-      --primary: #2563eb;
-      --primary-dark: #1d4ed8;
-      --text: #0f172a;
-      --muted: #64748b;
-      --border: #e2e8f0;
-      --success: #16a34a;
-      --danger: #dc2626;
+      color-scheme: dark;
+      --bg-deep: #070c0b;
+      --glass-bg: rgba(15, 25, 23, 0.82);
+      --glass-border: rgba(251, 191, 36, 0.24);
+      --amber: #f59e0b;
+      --amber-light: #fcd34d;
+      --emerald: #10b981;
+      --emerald-light: #6ee7b7;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
     }
-    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 40px; }
-    header {
-      background: var(--primary); color: white; padding: 16px;
-      position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-      display: flex; justify-content: space-between; align-items: center;
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
-    header h1 { margin: 0; font-size: 19px; font-weight: 700; }
-    .refresh-btn {
-      background: rgba(255,255,255,0.2); border: none; color: white;
-      padding: 7px 12px; border-radius: 8px; font-size: 13px; font-weight: 600;
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text-main);
+      background-color: var(--bg-deep);
+      background-image:
+        radial-gradient(circle at 15% 8%, rgba(245, 158, 11, 0.22) 0%, transparent 45%),
+        radial-gradient(circle at 85% 18%, rgba(16, 185, 129, 0.20) 0%, transparent 48%),
+        radial-gradient(circle at 20% 85%, rgba(217, 119, 6, 0.16) 0%, transparent 50%),
+        linear-gradient(165deg, #070c0b 0%, #0d1816 52%, #15110c 100%);
+      background-attachment: fixed;
+      padding: 12px 12px 48px 12px;
     }
-    .container { padding: 14px; max-width: 600px; margin: 0 auto; }
-    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-    .sum-card {
-      background: var(--card); border-radius: 14px; padding: 14px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+
+    .container { max-width: 600px; margin: 0 auto; }
+
+    /* Kompakt mobilos felső app-sáv */
+    .app-header {
+      background: linear-gradient(135deg, rgba(17, 29, 26, 0.92), rgba(24, 19, 14, 0.90));
+      border: 1px solid rgba(251, 191, 36, 0.28);
+      border-radius: 20px;
+      padding: 11px 14px;
+      margin-bottom: 8px;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
     }
-    .sum-label { font-size: 12px; color: var(--muted); font-weight: 600; }
-    .sum-val { font-size: 18px; font-weight: 800; margin-top: 4px; color: var(--text); }
-    .card {
-      background: var(--card); border-radius: 14px; padding: 16px;
-      margin-bottom: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    .app-brand { display: flex; align-items: center; gap: 10px; }
+    .leaf-btn {
+      font-size: 1.5rem;
+      line-height: 1;
+      cursor: pointer;
+      user-select: none;
+      padding: 5px;
+      border-radius: 12px;
+      background: rgba(251, 191, 36, 0.12);
+      border: 1px solid rgba(251, 191, 36, 0.25);
+      transition: transform 0.12s ease;
     }
-    .card h2 { margin: 0 0 12px 0; font-size: 16px; color: var(--text); }
-    .field { margin-bottom: 12px; }
-    .field label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 5px; }
-    .field input, .field select {
-      width: 100%; padding: 11px 12px; border: 1px solid var(--border);
-      border-radius: 10px; font-size: 15px; background: #f8fafc; color: var(--text);
+    .leaf-btn:active { transform: scale(1.22) rotate(15deg); }
+    .app-title { font-size: 1.02rem; font-weight: 700; color: #f8fafc; line-height: 1.2; }
+    .app-date { font-size: 0.72rem; color: #94a3b8; margin-top: 2px; }
+
+    .balance-chip {
+      background: rgba(16, 185, 129, 0.16);
+      border: 1px solid rgba(52, 211, 153, 0.40);
+      border-radius: 14px;
+      padding: 6px 11px;
+      text-align: right;
+      cursor: pointer;
     }
-    .who-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .who-btn {
-      padding: 11px; border: 2px solid var(--border); border-radius: 10px;
-      background: #f8fafc; font-size: 15px; font-weight: 700; color: var(--muted);
-      cursor: pointer; text-align: center;
+    .balance-chip.neg {
+      background: rgba(245, 158, 11, 0.16);
+      border-color: rgba(251, 191, 36, 0.42);
     }
-    .who-btn.active {
-      border-color: var(--primary); background: #eff6ff; color: var(--primary);
+    .balance-lbl {
+      font-size: 0.60rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #94a3b8;
+      display: block;
     }
-    .btn {
-      width: 100%; padding: 14px; background: var(--primary); color: white;
-      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
-      cursor: pointer; margin-top: 4px;
+    .balance-val { font-size: 0.95rem; font-weight: 800; color: #6ee7b7; white-space: nowrap; }
+    .balance-chip.neg .balance-val { color: #fcd34d; }
+
+    /* Egyenleg pontosító lenyíló */
+    .sync-panel {
+      background: rgba(14, 23, 21, 0.90);
+      border: 1px solid rgba(251, 191, 36, 0.24);
+      border-radius: 16px;
+      padding: 10px 13px;
+      margin-bottom: 10px;
+      font-size: 0.82rem;
     }
-    .btn:active { background: var(--primary-dark); }
-    .btn:disabled { opacity: 0.6; }
-    .status {
-      padding: 11px 12px; border-radius: 10px; font-size: 13px; font-weight: 600;
-      margin-bottom: 12px; display: none;
+    .sync-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 600;
+      color: #e2e8f0;
     }
-    .status.ok { display: block; background: #dcfce7; color: var(--success); }
-    .status.err { display: block; background: #fee2e2; color: var(--danger); }
-    .row-item {
-      display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 1px solid var(--border); padding: 10px 0;
+    .sync-body { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08); }
+    .sync-body.open { display: block; }
+
+    /* Felső kompakt mobilos menüsáv */
+    .top-nav-bar {
+      width: 100%;
+      background: rgba(14, 23, 21, 0.90);
+      border: 1px solid rgba(251, 191, 36, 0.24);
+      border-radius: 18px;
+      padding: 5px;
+      margin-bottom: 12px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.30);
     }
-    .row-item:last-child { border-bottom: none; }
-    .row-title { font-weight: 700; font-size: 14px; color: var(--text); }
-    .row-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
-    .row-amount { font-weight: 800; font-size: 14px; white-space: nowrap; margin-left: 10px; }
-    .loader { text-align: center; padding: 20px; color: var(--muted); font-size: 14px; }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 2px;
+      border-radius: 13px;
+      color: #94a3b8;
+      font-size: 0.68rem;
+      font-weight: 600;
+      gap: 2px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.16s ease;
+    }
+    .nav-item-ico { font-size: 1.15rem; line-height: 1.1; }
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(217, 119, 6, 0.42), rgba(5, 150, 105, 0.42));
+      border-color: rgba(251, 191, 36, 0.55);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.22);
+    }
+
+    /* Szekciók és kártyák */
+    .sec-title {
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #fbbf24;
+      margin: 8px 0 8px 2px;
+    }
+    .glass-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 14px;
+      margin-bottom: 12px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 6px 22px rgba(0, 0, 0, 0.26);
+    }
+    .glass-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #fbbf24;
+      margin-bottom: 10px;
+      gap: 6px;
+    }
+
+    /* Segmented radio (Kiadás/Bevétel, Zsolt/Vivien) */
+    .seg-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: rgba(11, 19, 17, 0.85);
+      border: 1px solid rgba(251, 191, 36, 0.22);
+      border-radius: 15px;
+      padding: 5px;
+      margin-bottom: 10px;
+    }
+    .seg-btn {
+      padding: 10px;
+      border-radius: 11px;
+      text-align: center;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #94a3b8;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .seg-btn.active {
+      background: linear-gradient(135deg, rgba(217, 119, 6, 0.45), rgba(5, 150, 105, 0.45));
+      border-color: rgba(251, 191, 36, 0.55);
+      color: #ffffff;
+    }
+
+    /* 3 oszlopos mobilos kategória rács */
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .cat-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .cat-chip {
+      background: rgba(15, 25, 23, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 14px;
+      color: #e2e8f0;
+      min-height: 44px;
+      padding: 6px 4px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      cursor: pointer;
+    }
+    .cat-chip.active {
+      background: linear-gradient(135deg, #d97706, #059669);
+      border-color: rgba(251, 191, 36, 0.75);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(217, 119, 6, 0.25);
+    }
+
+    /* Inputok és gombok */
+    .field { margin-bottom: 10px; }
+    .field label { display: block; font-size: 0.74rem; color: #94a3b8; margin-bottom: 4px; font-weight: 600; }
+    input, select {
+      width: 100%;
+      background-color: rgba(10, 17, 16, 0.88);
+      border: 1px solid rgba(251, 191, 36, 0.26);
+      border-radius: 13px;
+      color: #f8fafc;
+      font-size: 16px;
+      min-height: 45px;
+      padding: 0 12px;
+      outline: none;
+    }
+    input:focus, select:focus { border-color: #fbbf24; }
+    .two-col { display: grid; grid-template-columns: 1.25fr 1fr; gap: 8px; }
+    .even-col { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(135deg, #d97706, #059669);
+      border: 1px solid rgba(251, 191, 36, 0.65);
+      border-radius: 15px;
+      min-height: 48px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #ffffff;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(217, 119, 6, 0.28);
+      margin-top: 4px;
+    }
+    .btn-primary:active { transform: scale(0.98); }
+    .btn-primary:disabled { opacity: 0.6; }
+
+    /* Pills vízszintes görgethető sáv */
+    .pills-row {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 10px;
+      scrollbar-width: none;
+    }
+    .pills-row::-webkit-scrollbar { display: none; }
+    .pill-btn {
+      background: rgba(14, 23, 21, 0.88);
+      color: #e2e8f0;
+      border: 1px solid rgba(245, 158, 11, 0.28);
+      border-radius: 999px;
+      padding: 7px 13px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .pill-btn.active {
+      background: linear-gradient(135deg, rgba(217, 119, 6, 0.85), rgba(5, 150, 105, 0.85));
+      border-color: #fbbf24;
+      color: #ffffff;
+    }
+
+    /* Statisztika & KPI */
+    .kpi-hero-box {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(245, 158, 11, 0.12));
+      border: 1px solid rgba(52, 211, 153, 0.30);
+      border-radius: 16px;
+      padding: 12px 14px;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .kpi-two-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .kpi-mini-box {
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 10px 12px;
+    }
+    .kpi-lbl { font-size: 0.70rem; color: #94a3b8; margin-bottom: 2px; }
+    .kpi-val { font-size: 1.05rem; font-weight: 800; color: #f8fafc; }
+
+    .split-bar {
+      width: 100%; height: 10px; background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px; overflow: hidden; display: flex; margin: 8px 0 4px 0;
+    }
+    .split-zsolt { background: linear-gradient(90deg, #f59e0b, #fbbf24); height: 100%; }
+    .split-vivien { background: linear-gradient(90deg, #10b981, #34d399); height: 100%; }
+
+    .cat-row { padding: 8px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+    .cat-row:last-child { border-bottom: none; }
+    .cat-top { display: flex; justify-content: space-between; align-items: center; font-size: 0.84rem; margin-bottom: 5px; }
+    .cat-pct {
+      background: rgba(245, 158, 11, 0.18); border: 1px solid rgba(251, 191, 36, 0.38);
+      color: #fcd34d; font-weight: 700; font-size: 0.68rem; padding: 1px 7px; border-radius: 999px; margin-left: 4px;
+    }
+    .cat-bar-bg { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.07); border-radius: 999px; overflow: hidden; }
+    .cat-bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #f59e0b, #10b981); }
+
+    /* Albérlet & Mérőóra & Hitel */
+    .badge-ok {
+      background: rgba(16, 185, 129, 0.16); border: 1px solid rgba(52, 211, 153, 0.42);
+      color: #6ee7b7; padding: 3px 9px; border-radius: 999px; font-size: 0.68rem; font-weight: 700;
+    }
+    .badge-warn {
+      background: rgba(245, 158, 11, 0.18); border: 1px solid rgba(251, 191, 36, 0.45);
+      color: #fcd34d; padding: 3px 9px; border-radius: 999px; font-size: 0.68rem; font-weight: 700;
+    }
+    .meter-box {
+      background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(56, 189, 248, 0.24);
+      border-left: 4px solid #38bdf8; border-radius: 14px; padding: 10px 12px; margin-bottom: 8px;
+    }
+    .prog-bg { width: 100%; height: 9px; background: rgba(255,255,255,0.09); border-radius: 999px; overflow: hidden; margin-top: 8px; }
+    .prog-fill { height: 100%; background: linear-gradient(90deg, #f59e0b, #10b981); border-radius: 999px; }
+
+    /* Tranzakció kártyák */
+    .tx-row-wrap { display: flex; gap: 6px; align-items: stretch; margin-bottom: 6px; }
+    .tx-item {
+      flex: 1;
+      background: linear-gradient(135deg, rgba(16, 26, 24, 0.88), rgba(12, 20, 18, 0.82));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-left: 4px solid #f59e0b;
+      border-radius: 15px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+    .tx-bev { border-left-color: #10b981; }
+    .tx-hitel { border-left-color: #38bdf8; }
+    .tx-tart { border-left-color: #f43f5e; }
+    .tx-alb { border-left-color: #a855f7; }
+    .tx-korr { border-left-color: #14b8a6; }
+    .tx-del { background: rgba(127, 29, 29, 0.45); border-color: rgba(248, 113, 113, 0.65); border-left-color: #ef4444; }
+    .tx-name { font-size: 0.88rem; font-weight: 600; color: #f8fafc; line-height: 1.25; word-break: break-word; }
+    .tx-sub { font-size: 0.70rem; color: #94a3b8; margin-top: 3px; display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+    .tx-tag { background: rgba(255, 255, 255, 0.07); padding: 1px 7px; border-radius: 999px; color: #e2e8f0; font-size: 0.66rem; }
+    .tx-val { font-size: 0.92rem; font-weight: 800; white-space: nowrap; text-align: right; }
+    .del-btn {
+      width: 44px;
+      background: rgba(15, 25, 23, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 14px;
+      color: #f8fafc;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .del-btn.confirm { background: linear-gradient(135deg, #dc2626, #059669); border-color: #fca5a5; }
+
+    /* Toast értesítés */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 25, 23, 0.96);
+      border: 1px solid #fbbf24;
+      color: #ffffff;
+      padding: 11px 18px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.5);
+      z-index: 999;
+      display: none;
+    }
+
+    /* Titkos romantikus mód */
+    .love-card {
+      background: linear-gradient(145deg, rgba(66, 16, 36, 0.92), rgba(32, 15, 38, 0.94));
+      border: 1px solid rgba(244, 114, 182, 0.55);
+      border-radius: 26px;
+      padding: 26px 20px;
+      margin: 12px auto 16px auto;
+      text-align: center;
+      box-shadow: 0 16px 45px rgba(225, 29, 72, 0.35);
+    }
+    .love-hearts { font-size: 1.7rem; letter-spacing: 8px; margin-bottom: 10px; }
+    .love-title {
+      font-size: 1.55rem; font-weight: 800;
+      background: linear-gradient(90deg, #fbcfe8, #fda4af, #fde68a);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 14px;
+    }
+    .love-body { font-size: 0.98rem; line-height: 1.65; color: #ffe4e6; margin-bottom: 16px; }
+    .love-sign { font-size: 0.92rem; font-weight: 700; color: #fbcfe8; }
+    .music-btn {
+      background: linear-gradient(135deg, rgba(244, 63, 94, 0.85), rgba(217, 70, 239, 0.78));
+      border: 1px solid rgba(251, 207, 232, 0.65);
+      color: #fff1f2; font-size: 0.88rem; font-weight: 700;
+      padding: 11px 20px; border-radius: 999px; cursor: pointer; margin-bottom: 14px;
+    }
+    .loader { text-align: center; padding: 28px; color: #94a3b8; font-size: 0.88rem; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Közös pénzügyek 💰</h1>
-    <button class="refresh-btn" onclick="loadData()">↻ Frissítés</button>
-  </header>
-
-  <div class="container">
-    <div id="statusBox" class="status"></div>
-
-    <div class="summary-grid">
-      <div class="sum-card">
-        <div class="sum-label">E havi Zsolt</div>
-        <div class="sum-val" id="sumZsolt">0 Ft</div>
-      </div>
-      <div class="sum-card">
-        <div class="sum-label">E havi Vivien</div>
-        <div class="sum-val" id="sumVivien">0 Ft</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Új tétel rögzítése</h2>
-      <form id="entryForm" onsubmit="submitRow(event)">
-        <div class="field">
-          <label>Ki fizette?</label>
-          <div class="who-group">
-            <div class="who-btn active" id="btnZsolt" onclick="selectWho('Zsolt')">Zsolt</div>
-            <div class="who-btn" id="btnVivien" onclick="selectWho('Vivien')">Vivien</div>
-          </div>
-        </div>
-
-        <div class="field">
-          <label>Dátum</label>
-          <input type="date" id="inpDatum" required />
-        </div>
-
-        <div class="field">
-          <label>Kategória</label>
-          <select id="inpKategoria" required>
-            <option value="Élelmiszer & Háztartás">Élelmiszer & Háztartás</option>
-            <option value="Étterem & Randi">Étterem & Randi</option>
-            <option value="Dohánybolt">Dohánybolt</option>
-            <option value="Üzemanyag & Autó">Üzemanyag & Autó</option>
-            <option value="Előfizetés">Előfizetés</option>
-            <option value="Tech & Vásárlás">Tech & Vásárlás</option>
-            <option value="Gyógyszertár">Gyógyszertár</option>
-            <option value="Egyéb">Egyéb</option>
-            <option value="Tartozás">Tartozás</option>
-            <option value="Bevétel: Közös">Bevétel: Közös</option>
-            <option value="Albérlet: Közös">Albérlet: Közös</option>
-            <option value="Hitel: Törlesztés">Hitel: Törlesztés</option>
-            <option value="Egyenleg: Korrekció">Egyenleg: Korrekció</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>Megnevezés</label>
-          <input type="text" id="inpMegnevezes" placeholder="pl. Lidl, MOL, McDonald's..." required />
-        </div>
-
-        <div class="field">
-          <label>Összeg (Ft)</label>
-          <input type="number" inputmode="numeric" id="inpOsszeg" placeholder="pl. 4500" required />
-        </div>
-
-        <button type="submit" id="saveBtn" class="btn">Mentés a táblázatba</button>
-      </form>
-    </div>
-
-    <div class="card">
-      <h2>Legutóbbi 15 tétel</h2>
-      <div id="recentList">
-        <div class="loader">Adatok betöltése a Google táblázatból...</div>
-      </div>
-    </div>
+  <div class="container" id="appRoot">
+    <div class="loader">🍂 Adatok betöltése a felhőből...</div>
   </div>
+  <div id="toast" class="toast"></div>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbzBa1QGlWBG0bIEUnfacci9grwyIzZPUulW1gmC6pQm55gb8cb5YI9n3-mIirTViPES/exec";
-    let selectedWho = "Zsolt";
 
-    document.getElementById("inpDatum").value = new Date().toISOString().split("T")[0];
+    const HONAP_NEVEK = ["január", "február", "március", "április", "május", "június", "július", "augusztus", "szeptember", "október", "november", "december"];
+    const KIZART_KATEGORIAK = [
+      "Tartozás", "Hitel: Keret", "Hitel: Törlesztés",
+      "Albérlet: Beállítás", "Albérlet: Óraállás", "Albérlet: Csak napló", "Egyenleg: Korrekció"
+    ];
 
-    function selectWho(name) {
-      selectedWho = name;
-      document.getElementById("btnZsolt").classList.toggle("active", name === "Zsolt");
-      document.getElementById("btnVivien").classList.toggle("active", name === "Vivien");
+    const KIADAS_OPCIOK = [
+      ["Élelmiszer & Háztartás", "🛒 Élelmiszer"],
+      ["Étterem & Randi", "🍽️ Randi/Étel"],
+      ["Üzemanyag & Autó", "⛽ Autó"],
+      ["Lakhatás & Rezsi", "🏠 Lakhatás"],
+      ["Gyógyszertár", "💊 Patika"],
+      ["Dohánybolt", "🚬 Trafik"],
+      ["Előfizetés", "📱 Előfizetés"],
+      ["Ajándékozás", "🎁 Ajándék"],
+      ["Tech & Vásárlás", "💻 Vásárlás"],
+      ["Tartozás", "💸 Tartozás"],
+      ["Egyéb", "📦 Egyéb"]
+    ];
+
+    const BEVETEL_OPCIOK = [
+      ["Közös kasszába befizetés", "💰 Kassza"],
+      ["Ajándék / Támogatás", "🎁 Ajándék"],
+      ["Eladás / Visszatérítés", "🔄 Visszatérítés"],
+      ["Egyéb bevétel", "✨ Egyéb"]
+    ];
+
+    let state = {
+      rows: [],
+      aktivOldal: "uj",
+      titkosMod: false,
+      syncOpen: false,
+      ujTipus: "kiadas",
+      ujKiKat: "Élelmiszer & Háztartás",
+      ujBevKat: "Közös kasszába befizetés",
+      ujKi: "Zsolt",
+      statIdoszak: null,
+      statAlNezet: "kiadas",
+      albAlNezet: "befizetes",
+      albKi: "Zsolt",
+      naploSzuro: "Összes",
+      naploKereso: "",
+      torlesSor: null
+    };
+
+    // --- HANGEFFEKTEK (WEB AUDIO API) ---
+    let audioCtx = null;
+    function getAudioCtx() {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return null;
+      if (!audioCtx) audioCtx = new Ctx();
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      return audioCtx;
     }
 
-    function showStatus(msg, isError = false) {
-      const box = document.getElementById("statusBox");
-      box.textContent = msg;
-      box.className = "status " + (isError ? "err" : "ok");
-      if (!isError) setTimeout(() => { box.style.display = "none"; }, 3500);
+    function playClick() {
+      try {
+        const ctx = getAudioCtx();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator(), gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(740, now);
+        osc.frequency.exponentialRampToValueAtTime(510, now + 0.036);
+        gain.gain.setValueAtTime(0.09, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.042);
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start(now); osc.stop(now + 0.045);
+      } catch (e) {}
     }
 
-    function formatFt(num) {
-      return Math.round(num).toLocaleString("hu-HU") + " Ft";
+    function hangeffekt(tipus = "siker") {
+      try {
+        const ctx = getAudioCtx();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+        const p = (f, s, d, y = "sine", v = 0.18) => {
+          const o = ctx.createOscillator(), g = ctx.createGain();
+          o.type = y; o.frequency.setValueAtTime(f, s);
+          g.gain.setValueAtTime(v, s); g.gain.exponentialRampToValueAtTime(0.001, s + d);
+          o.connect(g); g.connect(ctx.destination); o.start(s); o.stop(s + d);
+        };
+        if (tipus === "siker") {
+          p(349.23, now, 0.45); p(440.00, now + 0.09, 0.45); p(523.25, now + 0.18, 0.50); p(659.25, now + 0.27, 0.65);
+        } else if (tipus === "torles") {
+          p(293.66, now, 0.28); p(220.00, now + 0.13, 0.42);
+        } else if (tipus === "frissites") {
+          p(659.25, now, 0.12); p(987.77, now + 0.08, 0.22);
+        } else if (tipus === "hiba") {
+          p(196.00, now, 0.15, "triangle"); p(196.00, now + 0.17, 0.20, "triangle");
+        }
+      } catch (e) {}
     }
 
-    async function loadData() {
+    // Romantikus zene
+    let musicPlaying = false, musicTimer = null;
+    const MELODY = [
+      [349.23, 0.0, 1.4], [440.00, 0.45, 1.3], [523.25, 0.90, 1.4], [659.25, 1.35, 1.8],
+      [587.33, 2.2, 0.9], [523.25, 2.7, 1.5],
+      [329.63, 3.6, 1.4], [392.00, 4.05, 1.3], [523.25, 4.50, 1.4], [587.33, 4.95, 1.8],
+      [523.25, 5.8, 0.9], [440.00, 6.3, 1.5],
+      [293.66, 7.2, 1.4], [349.23, 7.65, 1.3], [440.00, 8.10, 1.4], [523.25, 8.55, 1.8],
+      [493.88, 9.4, 0.9], [440.00, 9.9, 1.5],
+      [233.08, 10.8, 1.4], [349.23, 11.25, 1.3], [440.00, 11.70, 1.4], [523.25, 12.15, 2.0],
+      [440.00, 13.1, 1.6]
+    ];
+    function toggleMusic() {
+      const btn = document.getElementById("loveMusicBtn");
+      if (musicPlaying) {
+        musicPlaying = false;
+        clearTimeout(musicTimer);
+        if (btn) btn.textContent = "🎵 Romantikus zene indítása";
+        return;
+      }
+      const ctx = getAudioCtx();
+      if (!ctx) return;
+      musicPlaying = true;
+      if (btn) btn.textContent = "⏸️ Zene szüneteltetése (szól a dallam 💕)";
+      const loop = () => {
+        if (!musicPlaying) return;
+        MELODY.forEach(([freq, off, dur]) => {
+          const now = ctx.currentTime + off;
+          const o1 = ctx.createOscillator(), o2 = ctx.createOscillator(), g = ctx.createGain(), sg = ctx.createGain();
+          o1.type = "sine"; o2.type = "triangle";
+          o1.frequency.setValueAtTime(freq, now); o2.frequency.setValueAtTime(freq * 2, now);
+          sg.gain.setValueAtTime(0.035, now);
+          g.gain.setValueAtTime(0.0001, now);
+          g.gain.linearRampToValueAtTime(0.14, now + 0.06);
+          g.gain.exponentialRampToValueAtTime(0.0008, now + dur + 0.6);
+          o1.connect(g); o2.connect(sg); sg.connect(g); g.connect(ctx.destination);
+          o1.start(now); o2.start(now); o1.stop(now + dur + 0.7); o2.stop(now + dur + 0.7);
+        });
+        musicTimer = setTimeout(loop, 14600);
+      };
+      loop();
+    }
+
+    // --- SEGÉDFÜGGVÉNYEK ---
+    function fmtFt(val) {
+      return Math.round(Number(val) || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.style.display = "block";
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => { t.style.display = "none"; }, 2800);
+    }
+
+    function todayStr() {
+      return new Date().toISOString().split("T")[0];
+    }
+
+    function normDate(d) {
+      return String(d || "").trim().replace(/[.\/\s]+/g, "-").replace(/-+$/, "").slice(0, 10);
+    }
+
+    function honapCimke(ym) {
+      const [ev, ho] = ym.split("-");
+      const idx = parseInt(ho, 10) - 1;
+      return (ev && HONAP_NEVEK[idx]) ? `${ev}. ${HONAP_NEVEK[idx]}` : ym;
+    }
+
+    // 5x koppintás titkos módhoz
+    let leafTaps = 0, leafTimer = null;
+    function tapLeaf() {
+      playClick();
+      leafTaps++;
+      clearTimeout(leafTimer);
+      leafTimer = setTimeout(() => { leafTaps = 0; }, 2200);
+      if (leafTaps >= 5) {
+        leafTaps = 0;
+        state.titkosMod = true;
+        hangeffekt("siker");
+        render();
+      }
+    }
+
+    // --- API HÍVÁSOK ---
+    async function loadData(silent = false) {
       try {
         const res = await fetch(API_URL);
         const data = await res.json();
-        if (data.status !== "ok" || !data.rows) throw new Error("Hibás válasz.");
-
-        const rows = data.rows.slice(1);
-        updateMonthlySummary(rows);
-        renderRecent(rows);
+        if (data.status !== "ok" || !data.rows) throw new Error("Hibás válasz");
+        state.rows = data.rows.slice(1).map((r, i) => ({
+          sheetRow: i + 2,
+          datum: normDate(r[0]),
+          ki: String(r[1] || "").trim(),
+          kat: String(r[2] || "").trim(),
+          megnev: String(r[3] || "").trim(),
+          osszeg: Number(r[4]) || 0
+        }));
+        if (!silent) render();
       } catch (err) {
-        showStatus("Betöltési hiba: " + err.message, true);
-        document.getElementById("recentList").innerHTML = "<div class='loader'>Nem sikerült kapcsolódni.</div>";
+        document.getElementById("appRoot").innerHTML = `<div class="glass-card"><b>Csatlakozási hiba:</b> ${err.message}<br><br><button class="btn-primary" onclick="loadData()">Újrapróbálás</button></div>`;
       }
     }
 
-    function updateMonthlySummary(rows) {
-      const nowPrefix = new Date().toISOString().slice(0, 7); // pl. "2026-11"
-      let zsolt = 0, vivien = 0;
-
-      rows.forEach(r => {
-        const datum = String(r[0] || "").slice(0, 7);
-        const ki = String(r[1] || "").trim();
-        const kat = String(r[2] || "");
-        const osszeg = Number(r[4]) || 0;
-
-        if (datum === nowPrefix && !kat.startsWith("Bevétel") && !kat.startsWith("Hitel: Keret") && !kat.startsWith("Egyenleg")) {
-          if (ki === "Zsolt") zsolt += osszeg;
-          if (ki === "Vivien") vivien += osszeg;
-        }
-      });
-
-      document.getElementById("sumZsolt").textContent = formatFt(zsolt);
-      document.getElementById("sumVivien").textContent = formatFt(vivien);
-    }
-
-    function renderRecent(rows) {
-      const list = document.getElementById("recentList");
-      if (rows.length === 0) {
-        list.innerHTML = "<div class='loader'>Még nincsenek tételek.</div>";
-        return;
-      }
-
-      const lastItems = rows.slice(-15).reverse();
-      list.innerHTML = lastItems.map(r => {
-        const datum = String(r[0] || "").slice(0, 10);
-        const ki = r[1] || "";
-        const kat = r[2] || "";
-        const megnev = r[3] || "Tétel";
-        const osszeg = Number(r[4]) || 0;
-
-        return `<div class="row-item">
-          <div>
-            <div class="row-title">${megnev}</div>
-            <div class="row-sub">${datum} • ${ki} • ${kat}</div>
-          </div>
-          <div class="row-amount">${formatFt(osszeg)}</div>
-        </div>`;
-      }).join("");
-    }
-
-    async function submitRow(e) {
-      e.preventDefault();
-      const btn = document.getElementById("saveBtn");
-      btn.disabled = true;
-      btn.textContent = "Mentés...";
-
-      const rowValues = [
-        document.getElementById("inpDatum").value,
-        selectedWho,
-        document.getElementById("inpKategoria").value,
-        document.getElementById("inpMegnevezes").value.trim(),
-        Number(document.getElementById("inpOsszeg").value)
-      ];
-
+    async function appendRow(rowArr, toastMsg) {
       try {
         await fetch(API_URL, {
           method: "POST",
-          body: JSON.stringify({ action: "append", row: rowValues })
+          body: JSON.stringify({ action: "append", row: rowArr })
         });
-        showStatus("Elmentve a táblázatba! ✅");
-        document.getElementById("inpMegnevezes").value = "";
-        document.getElementById("inpOsszeg").value = "";
+        hangeffekt("siker");
+        showToast(toastMsg);
         await loadData();
-      } catch (err) {
-        showStatus("Mentési hiba: " + err.message, true);
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "Mentés a táblázatba";
+      } catch (e) {
+        hangeffekt("hiba");
+        showToast("Mentési hiba! ❌");
       }
+    }
+
+    async function deleteRow(sheetRow) {
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "delete", rowIndex: sheetRow })
+        });
+        state.torlesSor = null;
+        hangeffekt("torles");
+        showToast("Törölve! 🗑️");
+        await loadData();
+      } catch (e) {
+        hangeffekt("hiba");
+        showToast("Törlési hiba! ❌");
+      }
+    }
+
+    function calcBalance() {
+      let bev = 0, ki = 0, korr = 0;
+      state.rows.forEach(r => {
+        if (r.kat.startsWith("Bevétel:")) bev += r.osszeg;
+        else if (r.kat === "Egyenleg: Korrekció") korr += r.osszeg;
+        else if (!KIZART_KATEGORIAK.includes(r.kat)) ki += r.osszeg;
+      });
+      return Math.round(bev - ki + korr);
+    }
+
+    // --- FŐ RENDER ---
+    function render() {
+      const root = document.getElementById("appRoot");
+
+      if (state.titkosMod) {
+        root.innerHTML = `
+          <div class="love-card">
+            <div class="love-hearts">💖 ✨ 🍂 ✨ 💖</div>
+            <div class="love-title">Drága Vivienem ❤️</div>
+            <div class="love-body">
+              Ha ezt most olvasod, megtaláltad a kis titkos rejtekhelyünket ebben az alkalmazásban. 🍂✨<br><br>
+              Nemcsak a közös pénzügyeinket és a mindennapjainkat szeretem veled építeni, hanem minden egyes közös pillanatot, nevetést és csendet is melletted. Te vagy a legjobb dolog, ami velem történt, és végtelenül hálás vagyok azért, hogy vagy nekem.<br><br>
+              <b>Nagyon-nagyon szeretlek, ma, holnap és mindörökké! 💕</b>
+            </div>
+            <div class="love-sign">— Örökké a tiéd, Zsolt ❤️</div>
+          </div>
+          <div style="text-align:center;">
+            <button id="loveMusicBtn" class="music-btn" onclick="toggleMusic()">🎵 Romantikus zene indítása</button>
+          </div>
+          <button class="btn-primary" onclick="if(musicPlaying)toggleMusic(); state.titkosMod=false; playClick(); render();">🔙 Vissza a pénzügyekhez</button>
+        `;
+        return;
+      }
+
+      const bal = calcBalance();
+      const ma = new Date();
+      const maHo = String(ma.getMonth() + 1).padStart(2, "0");
+      const maNap = String(ma.getDate()).padStart(2, "0");
+
+      const navItems = [
+        ["uj", "🍁", "Új tétel"],
+        ["stat", "📊", "Statisztika"],
+        ["alb", "🏠", "Albérlet"],
+        ["hitel", "🏦", "Hitel"],
+        ["lista", "📜", "Napló"]
+      ];
+
+      let html = `
+        <div class="app-header">
+          <div class="app-brand">
+            <div class="leaf-btn" onclick="tapLeaf()">🍂</div>
+            <div>
+              <div class="app-title">Közös pénzügyek</div>
+              <div class="app-date">Zsolt &amp; Vivien • ${maHo}. ${maNap}.</div>
+            </div>
+          </div>
+          <div class="balance-chip ${bal < 0 ? "neg" : ""}" onclick="playClick(); state.syncOpen=!state.syncOpen; render();">
+            <span class="balance-lbl">Kassza egyenleg ⚖️</span>
+            <span class="balance-val">${fmtFt(bal)} Ft</span>
+          </div>
+        </div>
+
+        <div class="sync-panel">
+          <div class="sync-toggle" onclick="playClick(); state.syncOpen=!state.syncOpen; render();">
+            <span>⚖️ Egyenleg pontosítása (${fmtFt(bal)} Ft)</span>
+            <span>${state.syncOpen ? "▲" : "▼"}</span>
+          </div>
+          <div class="sync-body ${state.syncOpen ? "open" : ""}">
+            <div style="color:#94a3b8; font-size:0.75rem; margin-bottom:8px;">
+              Írd be a valós bankszámla egyenlegedet — a rendszer rögzíti a különbözetet anélkül, hogy torzítaná a havi statisztikákat.
+            </div>
+            <input type="number" id="inpValosEgyenleg" placeholder="pl. 142500" />
+            <button class="btn-primary" onclick="saveBalanceSync(${bal})">✅ Egyenleg rögzítése erre az összegre</button>
+          </div>
+        </div>
+
+        <nav class="top-nav-bar">
+          ${navItems.map(([k, ico, lbl]) => `
+            <div class="nav-item ${state.aktivOldal === k ? "active" : ""}" onclick="playClick(); state.aktivOldal='${k}'; render();">
+              <span class="nav-item-ico">${ico}</span>
+              <span>${lbl}</span>
+            </div>
+          `).join("")}
+        </nav>
+      `;
+
+      if (state.aktivOldal === "uj") html += renderUjTetel();
+      else if (state.aktivOldal === "stat") html += renderStat();
+      else if (state.aktivOldal === "alb") html += renderAlberlet();
+      else if (state.aktivOldal === "hitel") html += renderHitel();
+      else if (state.aktivOldal === "lista") html += renderNaplo();
+
+      root.innerHTML = html;
+    }
+
+    // --- 1. ÚJ TÉTEL ---
+    function renderUjTetel() {
+      const isBev = state.ujTipus === "bevetel";
+      const opciok = isBev ? BEVETEL_OPCIOK : KIADAS_OPCIOK;
+      const aktKat = isBev ? state.ujBevKat : state.ujKiKat;
+
+      let extraFields = "";
+      if (isBev) {
+        extraFields = `
+          <div class="field">
+            <label>Kitől / Ki tette bele?</label>
+            <input type="text" id="inpKi" value="Zsolt" placeholder="pl. Zsolt, Vivien, Szülők" />
+          </div>
+        `;
+      } else if (aktKat === "Tartozás") {
+        extraFields = `
+          <div class="even-col field">
+            <div><label>Ki tartozik?</label><input type="text" id="inpKiTart" placeholder="pl. Zsolt" /></div>
+            <div><label>Kinek?</label><input type="text" id="inpKinekTart" placeholder="pl. Vivien" /></div>
+          </div>
+        `;
+      } else {
+        extraFields = `
+          <div class="seg-group">
+            <div class="seg-btn ${state.ujKi === "Zsolt" ? "active" : ""}" onclick="playClick(); state.ujKi='Zsolt'; render();">Zsolt</div>
+            <div class="seg-btn ${state.ujKi === "Vivien" ? "active" : ""}" onclick="playClick(); state.ujKi='Vivien'; render();">Vivien</div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="seg-group">
+          <div class="seg-btn ${!isBev ? "active" : ""}" onclick="playClick(); state.ujTipus='kiadas'; render();">➖ Kiadás</div>
+          <div class="seg-btn ${isBev ? "active" : ""}" onclick="playClick(); state.ujTipus='bevetel'; render();">➕ Bevétel</div>
+        </div>
+
+        <div class="sec-title">1. Válassz kategóriát</div>
+        <div class="cat-grid ${isBev ? "cols-2" : ""}">
+          ${opciok.map(([val, lbl]) => `
+            <div class="cat-chip ${aktKat === val ? "active" : ""}" onclick="playClick(); ${isBev ? `state.ujBevKat='${val}'` : `state.ujKiKat='${val}'`}; render();">
+              ${aktKat === val ? "✓ " : ""}${lbl}
+            </div>
+          `).join("")}
+        </div>
+
+        <div class="sec-title">2. Részletek</div>
+        ${extraFields}
+        <div class="field">
+          <label>Megnevezés</label>
+          <input type="text" id="inpMegnev" placeholder="${isBev ? "pl. Havi keret, Visszatérítés" : "Mit vettetek? (pl. Lidl, Kávézó)"}" />
+        </div>
+        <div class="two-col field">
+          <div><label>Összeg (Ft)</label><input type="number" inputmode="numeric" id="inpOsszeg" placeholder="pl. 15000" /></div>
+          <div><label>Dátum</label><input type="date" id="inpDatum" value="${todayStr()}" /></div>
+        </div>
+        <button class="btn-primary" id="btnSaveUj" onclick="submitUjTetel()">🍂 Rögzítés a felhőbe</button>
+      `;
+    }
+
+    async function submitUjTetel() {
+      const megnev = document.getElementById("inpMegnev").value.trim();
+      const osszeg = Number(document.getElementById("inpOsszeg").value);
+      const datum = document.getElementById("inpDatum").value || todayStr();
+
+      if (["vivien", "szeretlek", "titok", "❤️"].includes(megnev.toLowerCase())) {
+        state.titkosMod = true;
+        hangeffekt("siker");
+        render();
+        return;
+      }
+
+      const isBev = state.ujTipus === "bevetel";
+      let ki = state.ujKi;
+      let kat = isBev ? `Bevétel: ${state.ujBevKat}` : state.ujKiKat;
+      let veglegesNev = megnev;
+
+      if (isBev) {
+        ki = document.getElementById("inpKi").value.trim();
+        if (!ki) { hangeffekt("hiba"); showToast("Add meg, kitől származik! ⚠️"); return; }
+      } else if (kat === "Tartozás") {
+        const kiT = document.getElementById("inpKiTart").value.trim();
+        const kinekT = document.getElementById("inpKinekTart").value.trim();
+        if (!kiT || !kinekT) { hangeffekt("hiba"); showToast("Írd be mindkét fél nevét! ⚠️"); return; }
+        ki = kiT;
+        veglegesNev = `${megnev} (${kiT} → ${kinekT})`;
+      }
+
+      if (!megnev || osszeg <= 0) {
+        hangeffekt("hiba");
+        showToast("Írj be megnevezést és összeget! ⚠️");
+        return;
+      }
+
+      const btn = document.getElementById("btnSaveUj");
+      btn.disabled = true; btn.textContent = "Mentés...";
+      await appendRow([datum, ki, kat, veglegesNev, osszeg], `Mentve: ${veglegesNev} (${fmtFt(osszeg)} Ft) 🍂`);
+    }
+
+    async function saveBalanceSync(aktBal) {
+      const valos = Number(document.getElementById("inpValosEgyenleg").value);
+      if (isNaN(valos)) { hangeffekt("hiba"); showToast("Érvényes számot adj meg!"); return; }
+      const elteres = valos - aktBal;
+      if (elteres === 0) { showToast("Az egyenleg már pontosan ennyi!"); return; }
+      const nev = `Egyenleg pontosítás (${fmtFt(aktBal)} → ${fmtFt(valos)} Ft)`;
+      state.syncOpen = false;
+      await appendRow([todayStr(), "Zsolt", "Egyenleg: Korrekció", nev, elteres], `Egyenleg beállítva: ${fmtFt(valos)} Ft ⚖️`);
+    }
+
+    // --- 2. STATISZTIKA ---
+    function renderStat() {
+      const nemHitel = state.rows.filter(r => !KIZART_KATEGORIAK.includes(r.kat));
+      const honapok = [...new Set(nemHitel.map(r => r.datum.slice(0, 7)).filter(h => h.length === 7))].sort().reverse();
+      if (!state.statIdoszak && honapok.length) state.statIdoszak = honapok[0];
+
+      const szurt = (state.statIdoszak === "OSSZES" || !state.statIdoszak)
+        ? state.rows
+        : state.rows.filter(r => r.datum.startsWith(state.statIdoszak));
+
+      const idoszakCim = (state.statIdoszak === "OSSZES") ? "Minden hónap" : honapCimke(state.statIdoszak || "");
+      const bevetelek = szurt.filter(r => r.kat.startsWith("Bevétel:"));
+      const tartozasok = szurt.filter(r => r.kat === "Tartozás");
+      const kiadasok = szurt.filter(r => !r.kat.startsWith("Bevétel:") && !KIZART_KATEGORIAK.includes(r.kat));
+
+      const osszBev = bevetelek.reduce((s, r) => s + r.osszeg, 0);
+      const osszKi = kiadasok.reduce((s, r) => s + r.osszeg, 0);
+      const egyenleg = osszBev - osszKi;
+
+      let pillsHtml = `<div class="pills-row">
+        ${honapok.map(h => `<div class="pill-btn ${state.statIdoszak === h ? "active" : ""}" onclick="playClick(); state.statIdoszak='${h}'; render();">${honapCimke(h)}</div>`).join("")}
+        <div class="pill-btn ${state.statIdoszak === "OSSZES" ? "active" : ""}" onclick="playClick(); state.statIdoszak='OSSZES'; render();">♾️ Összes</div>
+      </div>`;
+
+      let bodyHtml = "";
+      if (state.statAlNezet === "kiadas") {
+        const zsoltKi = kiadasok.filter(r => r.ki === "Zsolt").reduce((s, r) => s + r.osszeg, 0);
+        const vivienKi = kiadasok.filter(r => r.ki === "Vivien").reduce((s, r) => s + r.osszeg, 0);
+        const zPct = osszKi > 0 ? Math.round(zsoltKi / osszKi * 1000) / 10 : 50;
+        const vPct = Math.round((100 - zPct) * 10) / 10;
+
+        const katMap = {};
+        kiadasok.forEach(r => {
+          if (!katMap[r.kat]) katMap[r.kat] = { sum: 0, db: 0 };
+          katMap[r.kat].sum += r.osszeg;
+          katMap[r.kat].db++;
+        });
+        const katList = Object.entries(katMap).sort((a, b) => b[1].sum - a[1].sum);
+
+        bodyHtml = `
+          <div class="glass-card">
+            <div class="glass-header"><span>👥 Ki mennyit fizetett</span></div>
+            <div style="display:flex; justify-content:space-between; font-size:0.80rem;">
+              <span>🟡 <b>Zsolt:</b> ${fmtFt(zsoltKi)} Ft (${zPct}%)</span>
+              <span>🟢 <b>Vivien:</b> ${fmtFt(vivienKi)} Ft (${vPct}%)</span>
+            </div>
+            <div class="split-bar">
+              <div class="split-zsolt" style="width:${zPct}%"></div>
+              <div class="split-vivien" style="width:${vPct}%"></div>
+            </div>
+          </div>
+          <div class="glass-card">
+            <div class="glass-header"><span>📊 Kategóriák bontása</span><span>${katList.length} db</span></div>
+            ${katList.length === 0 ? "Nincs kiadás." : katList.map(([k, v]) => {
+              const pct = osszKi > 0 ? (v.sum / osszKi * 100).toFixed(1) : "0.0";
+              return `<div class="cat-row">
+                <div class="cat-top">
+                  <div><b>${k}</b> <span class="cat-pct">${pct}%</span></div>
+                  <div><b>${fmtFt(v.sum)} Ft</b> <span style="color:#94a3b8; font-size:0.72rem;">(${v.db})</span></div>
+                </div>
+                <div class="cat-bar-bg"><div class="cat-bar-fill" style="width:${Math.min(100, Number(pct))}%"></div></div>
+              </div>`;
+            }).join("")}
+          </div>
+        `;
+      } else if (state.statAlNezet === "bevetel") {
+        const bevMap = {};
+        bevetelek.forEach(r => { bevMap[r.ki] = (bevMap[r.ki] || 0) + r.osszeg; });
+        bodyHtml = `<div class="glass-card"><div class="glass-header"><span>💰 Befizetők aránya</span></div>
+          ${Object.entries(bevMap).map(([k, v]) => `<div class="cat-row"><div class="cat-top"><b>👤 ${k}</b><b style="color:#6ee7b7;">${fmtFt(v)} Ft</b></div></div>`).join("") || "Nincs bevétel."}
+        </div>`;
+      } else {
+        bodyHtml = `<div class="glass-card"><div class="glass-header"><span>💸 Tartozások</span></div>
+          ${tartozasok.map(r => `<div class="cat-row"><div class="cat-top"><b>${r.megnev}</b><b style="color:#fda4af;">${fmtFt(r.osszeg)} Ft</b></div></div>`).join("") || "Nincs tartozás."}
+        </div>`;
+      }
+
+      return `
+        ${pillsHtml}
+        <div class="glass-card">
+          <div class="glass-header"><span>📌 Havi mérleg</span><span style="color:#94a3b8;">${idoszakCim}</span></div>
+          <div class="kpi-hero-box">
+            <div class="kpi-lbl">Időszaki egyenleg</div>
+            <div class="kpi-val" style="font-size:1.35rem; color:${egyenleg >= 0 ? "#34d399" : "#fbbf24"};">${fmtFt(egyenleg)} Ft</div>
+          </div>
+          <div class="kpi-two-grid">
+            <div class="kpi-mini-box"><div class="kpi-lbl">➕ Bevétel</div><div class="kpi-val" style="color:#6ee7b7;">${fmtFt(osszBev)} Ft</div></div>
+            <div class="kpi-mini-box"><div class="kpi-lbl">➖ Kiadás</div><div class="kpi-val" style="color:#fcd34d;">${fmtFt(osszKi)} Ft</div></div>
+          </div>
+        </div>
+        <div class="pills-row">
+          <div class="pill-btn ${state.statAlNezet === "kiadas" ? "active" : ""}" onclick="playClick(); state.statAlNezet='kiadas'; render();">📤 Kiadások</div>
+          <div class="pill-btn ${state.statAlNezet === "bevetel" ? "active" : ""}" onclick="playClick(); state.statAlNezet='bevetel'; render();">📥 Bevételek</div>
+          <div class="pill-btn ${state.statAlNezet === "tartozas" ? "active" : ""}" onclick="playClick(); state.statAlNezet='tartozas'; render();">💸 Tartozások</div>
+        </div>
+        ${bodyHtml}
+      `;
+    }
+
+    // --- 3. ALBÉRLET ---
+    function renderAlberlet() {
+      const ma = new Date();
+      const maPrefix = ma.toISOString().slice(0, 7);
+      const beallRows = state.rows.filter(r => r.kat === "Albérlet: Beállítás");
+      let berletiDij = 0, kaucio = 0, fizNap = 10, foberlo = "", megj = "";
+
+      if (beallRows.length) {
+        const last = beallRows[beallRows.length - 1];
+        berletiDij = last.osszeg;
+        last.megnev.split("|").forEach(p => {
+          p = p.trim();
+          if (p.startsWith("kaucio:")) kaucio = Number(p.replace("kaucio:", "")) || 0;
+          if (p.startsWith("nap:")) fizNap = Number(p.replace("nap:", "")) || 10;
+          if (p.startsWith("foberlo:")) foberlo = p.replace("foberlo:", "").trim();
+          if (p.startsWith("megj:")) megj = p.replace("megj:", "").trim();
+        });
+      }
+
+      const albPenz = state.rows.filter(r => r.kat === "Lakhatás & Rezsi" || r.kat === "Albérlet: Csak napló" || r.megnev.startsWith("Albérlet:"));
+      const ehaviAlb = albPenz.filter(r => r.datum.startsWith(maPrefix));
+      const ehaviSum = ehaviAlb.reduce((s, r) => s + r.osszeg, 0);
+      const osszAlbSum = albPenz.reduce((s, r) => s + r.osszeg, 0);
+      const fizetve = ehaviAlb.some(r => /bérleti díj|lakbér|albérlet|lakhatás/i.test(r.megnev));
+
+      let subHtml = "";
+      if (state.albAlNezet === "befizetes") {
+        subHtml = `
+          <div class="sec-title">🏠 Lakhatás / Bérleti díj befizetése</div>
+          <div class="seg-group">
+            <div class="seg-btn ${state.albKi === "Zsolt" ? "active" : ""}" onclick="playClick(); state.albKi='Zsolt'; render();">Zsolt</div>
+            <div class="seg-btn ${state.albKi === "Vivien" ? "active" : ""}" onclick="playClick(); state.albKi='Vivien'; render();">Vivien</div>
+          </div>
+          <div class="field"><label>Megjegyzés</label><input type="text" id="albMegj" placeholder="pl. ${ma.getFullYear()}. ${HONAP_NEVEK[ma.getMonth()]} havi lakhatás" /></div>
+          <div class="two-col field">
+            <div><label>Összeg (Ft)</label><input type="number" inputmode="numeric" id="albOsszeg" value="${berletiDij || ""}" /></div>
+            <div><label>Dátum</label><input type="date" id="albDatum" value="${todayStr()}" /></div>
+          </div>
+          <label style="display:flex; align-items:center; gap:8px; font-size:0.82rem; margin:8px 0;">
+            <input type="checkbox" id="albKasszabol" checked style="width:20px; min-height:20px;" />
+            💰 Levonom a közös kasszából is
+          </label>
+          <button class="btn-primary" onclick="submitAlbBefiz()">🏠 Lakhatás befizetés mentése</button>
+        `;
+      } else if (state.albAlNezet === "ora") {
+        const oraRows = state.rows.filter(r => r.kat === "Albérlet: Óraállás");
+        const orak = {};
+        oraRows.forEach(r => {
+          const nev = r.megnev.split("|")[0].trim();
+          if (!orak[nev]) orak[nev] = [];
+          orak[nev].push(r);
+        });
+        subHtml = Object.entries(orak).map(([nev, list]) => {
+          const last = list[list.length - 1];
+          const prev = list.length >= 2 ? list[list.length - 2] : null;
+          const diff = prev ? last.osszeg - prev.osszeg : null;
+          return `<div class="meter-box">
+            <div style="display:flex; justify-content:space-between;"><b>${nev}</b><span style="font-weight:800; color:#7dd3fc;">${fmtFt(last.osszeg)}</span></div>
+            <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:#94a3b8; margin-top:4px;">
+              <span>📅 ${last.datum}</span>
+              ${diff !== null && diff >= 0 ? `<span style="color:#6ee7b7;">(+${fmtFt(diff)} fogyasztás)</span>` : ""}
+            </div>
+          </div>`;
+        }).join("") + `
+          <div class="sec-title">Új óraállás rögzítése</div>
+          <div class="field"><label>Mérőóra</label>
+            <select id="oraTipus">
+              <option>⚡ Villanyóra (kWh)</option>
+              <option>🔥 Gázóra (m³)</option>
+              <option>💧 Hideg vízóra (m³)</option>
+              <option>♨️ Meleg vízóra (m³)</option>
+            </select>
+          </div>
+          <div class="two-col field">
+            <div><label>Óraállás</label><input type="number" inputmode="numeric" id="oraAllas" placeholder="pl. 12450" /></div>
+            <div><label>Dátum</label><input type="date" id="oraDatum" value="${todayStr()}" /></div>
+          </div>
+          <div class="field"><label>Megjegyzés</label><input type="text" id="oraMegj" placeholder="pl. Fotózva, diktálva" /></div>
+          <button class="btn-primary" onclick="submitOra()">💾 Óraállás mentése</button>
+        `;
+      } else if (state.albAlNezet === "naplo") {
+        const list = [...albPenz, ...state.rows.filter(r => r.kat === "Albérlet: Óraállás")].sort((a, b) => b.sheetRow - a.sheetRow);
+        subHtml = list.slice(0, 20).map(r => renderTxCard(r)).join("") || "Még nincs albérleti tétel.";
+      } else {
+        subHtml = `
+          <div class="field"><label>Havi bérleti díj (Ft)</label><input type="number" id="setBerleti" value="${berletiDij || ""}" /></div>
+          <div class="field"><label>Letett kaució (Ft)</label><input type="number" id="setKaucio" value="${kaucio || ""}" /></div>
+          <div class="field"><label>Fizetési határnap (nap)</label><input type="number" id="setNap" value="${fizNap}" /></div>
+          <div class="field"><label>Főbérlő neve / tel</label><input type="text" id="setFob" value="${foberlo}" /></div>
+          <div class="field"><label>Megjegyzés</label><input type="text" id="setMegj" value="${megj}" /></div>
+          <button class="btn-primary" onclick="submitAlbAdatok()">💾 Lakás adatainak mentése</button>
+        `;
+      }
+
+      return `
+        <div class="glass-card">
+          <div class="glass-header">
+            <span>🏠 Albérlet (${HONAP_NEVEK[ma.getMonth()]})</span>
+            ${fizetve ? `<span class="badge-ok">✅ E havi OK</span>` : `<span class="badge-warn">⏳ Esedékes: ${fizNap}.</span>`}
+          </div>
+          <div class="kpi-two-grid">
+            <div class="kpi-mini-box"><div class="kpi-lbl">🔑 Bérleti díj</div><div class="kpi-val" style="color:#fbbf24;">${fmtFt(berletiDij)} Ft</div></div>
+            <div class="kpi-mini-box"><div class="kpi-lbl">📅 E havi lakhatás</div><div class="kpi-val" style="color:#34d399;">${fmtFt(ehaviSum)} Ft</div></div>
+            <div class="kpi-mini-box"><div class="kpi-lbl">🛡️ Kaució</div><div class="kpi-val" style="color:#7dd3fc;">${fmtFt(kaucio)} Ft</div></div>
+            <div class="kpi-mini-box"><div class="kpi-lbl">📊 Összes kiadás</div><div class="kpi-val">${fmtFt(osszAlbSum)} Ft</div></div>
+          </div>
+          ${foberlo ? `<div style="font-size:0.75rem; color:#cbd5e1; margin-top:8px;">👤 ${foberlo}</div>` : ""}
+          ${megj ? `<div style="font-size:0.73rem; color:#94a3b8; margin-top:4px;">📝 ${megj}</div>` : ""}
+        </div>
+
+        <div class="pills-row">
+          <div class="pill-btn ${state.albAlNezet === "befizetes" ? "active" : ""}" onclick="playClick(); state.albAlNezet='befizetes'; render();">💳 Befizetés</div>
+          <div class="pill-btn ${state.albAlNezet === "ora" ? "active" : ""}" onclick="playClick(); state.albAlNezet='ora'; render();">⚡ Mérőórák</div>
+          <div class="pill-btn ${state.albAlNezet === "naplo" ? "active" : ""}" onclick="playClick(); state.albAlNezet='naplo'; render();">📜 Napló</div>
+          <div class="pill-btn ${state.albAlNezet === "adatok" ? "active" : ""}" onclick="playClick(); state.albAlNezet='adatok'; render();">⚙️ Adatok</div>
+        </div>
+        ${subHtml}
+      `;
+    }
+
+    async function submitAlbBefiz() {
+      const osszeg = Number(document.getElementById("albOsszeg").value);
+      const datum = document.getElementById("albDatum").value || todayStr();
+      const megj = document.getElementById("albMegj").value.trim();
+      const kasszabol = document.getElementById("albKasszabol").checked;
+      if (osszeg <= 0) { hangeffekt("hiba"); showToast("Adj meg összeget!"); return; }
+      const nev = "Albérlet: Lakhatás" + (megj ? ` (${megj})` : "");
+      const kat = kasszabol ? "Lakhatás & Rezsi" : "Albérlet: Csak napló";
+      await appendRow([datum, state.albKi, kat, nev, osszeg], "Lakhatás mentve! 🏠");
+    }
+
+    async function submitOra() {
+      const tipus = document.getElementById("oraTipus").value;
+      const allas = Number(document.getElementById("oraAllas").value);
+      const datum = document.getElementById("oraDatum").value || todayStr();
+      const megj = document.getElementById("oraMegj").value.trim();
+      if (allas <= 0) { hangeffekt("hiba"); showToast("Adj meg óraállást!"); return; }
+      await appendRow([datum, "Zsolt", "Albérlet: Óraállás", `${tipus}${megj ? " | " + megj : ""}`, allas], "Óraállás rögzítve! ⚡");
+    }
+
+    async function submitAlbAdatok() {
+      const b = Number(document.getElementById("setBerleti").value) || 0;
+      const k = Number(document.getElementById("setKaucio").value) || 0;
+      const n = Number(document.getElementById("setNap").value) || 10;
+      const f = document.getElementById("setFob").value.trim();
+      const m = document.getElementById("setMegj").value.trim();
+      const meta = `Albérlet adatok | kaucio:${k} | nap:${n} | foberlo:${f} | megj:${m}`;
+      await appendRow([todayStr(), "Zsolt", "Albérlet: Beállítás", meta, b], "Albérlet adatok frissítve! 🏡");
+    }
+
+    // --- 4. HITEL ---
+    function renderHitel() {
+      const keretek = state.rows.filter(r => r.kat === "Hitel: Keret");
+      const torlesztesek = state.rows.filter(r => r.kat === "Hitel: Törlesztés");
+      const maPrefix = new Date().toISOString().slice(0, 7);
+
+      const cards = keretek.map(h => {
+        const reszek = h.megnev.split("|").map(s => s.trim());
+        const nev = reszek[0];
+        let havi = 0, kezdet = h.datum, vege = "";
+        reszek.slice(1).forEach(p => {
+          if (p.startsWith("havi:")) havi = Number(p.replace("havi:", "")) || 0;
+          if (p.startsWith("kezdet:")) kezdet = p.replace("kezdet:", "").trim();
+          if (p.startsWith("vege:")) vege = p.replace("vege:", "").trim();
+        });
+        const bef = torlesztesek.filter(t => t.megnev.startsWith(nev));
+        const kifizetve = bef.reduce((s, t) => s + t.osszeg, 0);
+        const ehavi = bef.filter(t => t.datum.startsWith(maPrefix) && !t.megnev.includes("korábbi")).reduce((s, t) => s + t.osszeg, 0);
+        const hatralevo = Math.max(0, h.osszeg - kifizetve);
+        const pct = h.osszeg > 0 ? Math.min(100, (kifizetve / h.osszeg * 100)).toFixed(1) : "0.0";
+
+        return `<div class="glass-card">
+          <div class="glass-header"><span>🏦 ${nev}</span><span>${pct}%</span></div>
+          <div class="kpi-two-grid">
+            <div class="kpi-mini-box"><div class="kpi-lbl">Hátralévő tartozás</div><div class="kpi-val" style="color:#fbbf24;">${fmtFt(hatralevo)} Ft</div></div>
+            <div class="kpi-mini-box"><div class="kpi-lbl">E havi törlesztés</div><div class="kpi-val" style="color:#34d399;">${fmtFt(ehavi)} Ft</div></div>
+          </div>
+          <div class="prog-bg"><div class="prog-fill" style="width:${pct}%"></div></div>
+          <div style="font-size:0.72rem; color:#94a3b8; margin-top:8px;">🗓️ ${kezdet} → ${vege || "folyamatban"} • Kifizetve: ${fmtFt(kifizetve)} / ${fmtFt(h.osszeg)} Ft</div>
+        </div>`;
+      }).join("");
+
+      const hNevek = keretek.map(k => k.megnev.split("|")[0].trim());
+      return `
+        ${cards || '<div class="glass-card">Még nincs beállított hitel.</div>'}
+        ${hNevek.length ? `
+          <div class="glass-card">
+            <div class="glass-header"><span>💸 Törlesztés rögzítése</span></div>
+            <div class="field"><label>Melyik hitelhez?</label>
+              <select id="hitelValaszt">${hNevek.map(n => `<option value="${n}">${n}</option>`).join("")}</select>
+            </div>
+            <div class="two-col field">
+              <div><label>Összeg (Ft)</label><input type="number" id="hitelOsszeg" placeholder="pl. 50000" /></div>
+              <div><label>Dátum</label><input type="date" id="hitelDatum" value="${todayStr()}" /></div>
+            </div>
+            <button class="btn-primary" onclick="submitHitelTorlesztes()">✅ Levonás rögzítése</button>
+          </div>
+        ` : ""}
+      `;
+    }
+
+    async function submitHitelTorlesztes() {
+      const nev = document.getElementById("hitelValaszt").value;
+      const osszeg = Number(document.getElementById("hitelOsszeg").value);
+      const datum = document.getElementById("hitelDatum").value || todayStr();
+      if (osszeg <= 0) { hangeffekt("hiba"); showToast("Adj meg összeget!"); return; }
+      await appendRow([datum, "Zsolt", "Hitel: Törlesztés", `${nev} – törlesztés`, osszeg], "Levonás rögzítve! 🏦");
+    }
+
+    // --- 5. NAPLÓ ---
+    function renderTxCard(r) {
+      const aktiv = state.torlesSor === r.sheetRow;
+      let cls = "tx-item", col = "#fbbf24", pre = "−", katLbl = r.kat;
+      if (r.kat.startsWith("Bevétel:")) { cls += " tx-bev"; col = "#34d399"; pre = "+"; katLbl = r.kat.replace("Bevétel: ", ""); }
+      else if (r.kat === "Egyenleg: Korrekció") { cls += " tx-korr"; col = "#5eead4"; pre = r.osszeg > 0 ? "+" : ""; katLbl = "Korrekció"; }
+      else if (r.kat.startsWith("Hitel:")) { cls += " tx-hitel"; col = "#7dd3fc"; pre = ""; }
+      else if (r.kat.startsWith("Albérlet:")) { cls += " tx-alb"; col = "#d8b4fe"; pre = ""; }
+      else if (r.kat === "Tartozás") { cls += " tx-tart"; col = "#fda4af"; pre = ""; }
+      if (aktiv) cls += " tx-del";
+
+      const nev = r.megnev.split("|")[0].trim();
+      return `
+        <div class="tx-row-wrap">
+          <div class="${cls}">
+            <div style="min-width:0;">
+              <div class="tx-name">${nev}</div>
+              <div class="tx-sub"><span class="tx-tag">${katLbl}</span><span>${r.ki}</span><span>• ${r.datum}</span></div>
+            </div>
+            <div class="tx-val" style="color:${col};">${pre}${fmtFt(r.osszeg)} Ft</div>
+          </div>
+          ${!aktiv
+            ? `<button class="del-btn" onclick="playClick(); state.torlesSor=${r.sheetRow}; render();">🗑️</button>`
+            : `<button class="del-btn confirm" onclick="deleteRow(${r.sheetRow})">✅</button>`
+          }
+        </div>
+      `;
+    }
+
+    function renderNaplo() {
+      const szurok = ["Összes", "➖ Kiadások", "➕ Bevételek", "🏠 Albérlet", "💸 Tartozások", "🏦 Hitelek", "⚖️ Korrekciók"];
+      let list = [...state.rows].reverse();
+
+      if (state.naploSzuro === "➖ Kiadások") list = list.filter(r => !r.kat.startsWith("Bevétel:") && !KIZART_KATEGORIAK.includes(r.kat));
+      else if (state.naploSzuro === "➕ Bevételek") list = list.filter(r => r.kat.startsWith("Bevétel:"));
+      else if (state.naploSzuro === "🏠 Albérlet") list = list.filter(r => r.kat === "Lakhatás & Rezsi" || r.kat.startsWith("Albérlet:") || r.megnev.startsWith("Albérlet:"));
+      else if (state.naploSzuro === "💸 Tartozások") list = list.filter(r => r.kat === "Tartozás");
+      else if (state.naploSzuro === "🏦 Hitelek") list = list.filter(r => r.kat.startsWith("Hitel:"));
+      else if (state.naploSzuro === "⚖️ Korrekciók") list = list.filter(r => r.kat === "Egyenleg: Korrekció");
+
+      if (state.naploKereso) {
+        const q = state.naploKereso.toLowerCase();
+        list = list.filter(r => `${r.megnev} ${r.kat} ${r.ki} ${r.datum}`.toLowerCase().includes(q));
+      }
+
+      const ossz = list.reduce((s, r) => s + r.osszeg, 0);
+
+      return `
+        <div class="pills-row">
+          ${szurok.map(sz => `<div class="pill-btn ${state.naploSzuro === sz ? "active" : ""}" onclick="playClick(); state.naploSzuro='${sz}'; render();">${sz}</div>`).join("")}
+        </div>
+        <div style="display:flex; gap:8px; margin-bottom:8px;">
+          <input type="text" placeholder="🔍 Keresés név, kategória, dátum..." value="${state.naploKereso}" oninput="state.naploKereso=this.value; render();" />
+          <button class="del-btn" style="width:52px;" onclick="hangeffekt('frissites'); showToast('Frissítve! 🔄'); loadData();">🔄</button>
+        </div>
+        <div style="font-size:0.78rem; color:#94a3b8; margin-bottom:10px;">📋 <b>${list.length} tétel</b> • Összesen: <b>${fmtFt(ossz)} Ft</b></div>
+        ${list.slice(0, 35).map(r => renderTxCard(r)).join("") || '<div class="glass-card">Nincs találat.</div>'}
+      `;
     }
 
     loadData();
