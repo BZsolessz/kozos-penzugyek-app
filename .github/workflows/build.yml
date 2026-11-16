@@ -24,11 +24,12 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Capacitor telepítése és Android projekt generálása
+      - name: Capacitor és ikonok generálása
         run: |
           npm install
-          npx cap init "Közös pénzügyek" "hu.bzsolessz.kozospenzugyek" --web-dir www
+          npx cap init "Közös Pénzügyek" "hu.bzsolessz.kozospenzugyek" --web-dir www
           npx cap add android
+          npx @capacitor/assets generate --android --iconBackgroundColor '#070c0b' --splashBackgroundColor '#070c0b'
           npx cap sync android
 
       - name: Debug APK fordítása
