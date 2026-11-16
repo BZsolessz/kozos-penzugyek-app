@@ -1,0 +1,1 @@
+# kozos-penzugyek-app
